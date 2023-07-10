@@ -1,0 +1,23 @@
+{% extends "index.html" %}
+
+<html>
+<head>
+<title>
+	{% block title %}
+	Перечень проектов
+	{% endblock %}
+</title>
+</head>
+
+
+<body>
+	{% block sidebar %}
+		<h1>Все проекты:</h1>
+		{% for project in projects %}
+			<a href='{% url "doc_manager:document_list" %}'>
+				<h3>{{ project.name_full }}</h3>
+			</a>
+		{% endfor %}
+	{% endblock %}
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "index.html" %}
+
+<html>
+<head>
+    <title>
+    {% block title %}
+        {{ document.code }}
+    {% endblock %}
+    </title>
+</head>
+
+<body>
+{% block content %}
+    <h2>Детали документа:</h2>
+    <table>
+        <tr>
+            <th>KKS код</th>
+            <th>Наименование</th>
+            <th>Разработчик</th>
+            <th>Дата создания</th>
+            <th>Дата изменения</th>
+        </tr>
+        <tr>
+            <td>
+            {{ document.code }}
+            </td>
+            <td>
+            {{ document.name }}
+            </td>
+            <td>
+            {{ document.developer }}
+            </td>
+            <td>
+            {{ document.date_creation }}
+            </td>
+            <td>
+            {{ document.date_update }}
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+
+<html>
+<head>
+<title>
+{% block title %}
+Все документы
+{% endblock %}
+</title>
+
+</head>
+
+<body>
+<h1>Все документы:</h1>
+{% block content %}
+	<h3>Подзаголовок list</h3>
+	<table>
+	<tr>
+		<th>KKS код</th>
+		<th>Наименование</th>
+		<th>Разработчик</th>
+		<th>Дата создания</th>
+	</tr>
+
+	
+	{% for document in documents %}
+		<tr>
+			<td>
+			<a href="{% url 'doc_manager:document_detail' document.id %}">
+			{{ document.code }}
+			</a>
+			</td>
+			<td>
+			{{ document.name }}
+			</td>
+			<td>
+			{{ document.developer }}
+			</td>
+			<td>
+			{{ document.date_creation }}
+			</td>
+		</tr>
+	{% endfor %}
+	
+	</table>
+{% endblock %}
+
+</body>
+</html>

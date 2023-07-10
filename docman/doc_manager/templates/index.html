@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>
+	{% block title %}
+	{% endblock %}
+	</title>
+	<link rel="stylesheet" href='{% static "style.css" %}'>
+</head>
+
+<body>
+	<div class="wrapper">
+		<header>
+			<div class="top_container">
+				<div class="header_left">
+					<a href="{% url 'doc_manager:project_list' %}">
+					<h1>Добро пожаловать в DocMan</h1>
+					</a>
+				</div>
+
+				<div class="header_center">
+					<h1><h2>Здесь будет верхняя панель</h2></h1>
+				</div>
+
+				<div class="header_right">
+					<form action="{% url "doc_manager:find_documents" %}">
+						<input type="search" placeholder="Search" name="search">
+						<button type="submit">Найти</button>
+					</form>
+				</div>
+			</div>
+		</header>
+
+		<div class = "main_container">
+			<div class="sidebar">
+				{% block sidebar %}
+				{% endblock %}
+			</div>
+
+			<div class="content">
+				{% block content %}
+				{% endblock %}
+			</div>
+
+		</div>
+	</div>
+</body>
+</html>
