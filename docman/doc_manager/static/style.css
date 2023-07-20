@@ -1,31 +1,31 @@
 html, body {
     margin:0;
     height:100%;
-
+}
+header {
+    background-color: rgb(155, 160, 177);
 }
 
 body {
-    font-family:Arial, Helvetica, sans-serif;
+    font-family:Arial, Helvetica, sans-serif
 }
 
 .top_container, .main_container{
-    width:90%;
+    width:100%;
+    padding: 0 80px 0 80px;
     margin:0 auto;
     box-sizing: border-box;
-
 }
 
-.header_left, .header_center, .header_right {
+.header_left, .header_center, .header_right, .header_center_right, .user {
     display: inline-block;
     box-sizing: border-box;
     margin:0 auto;
     padding: 0;
-    width: 33%; 
+    width: 18%;
     padding: 10px 0;
     vertical-align:middle;
-
 }
-
 
 
 .sidebar, .content {
@@ -44,6 +44,7 @@ body {
 
 .content{
     width: 70%;
+    height: 70%;
     text-align: center;
     
 }
@@ -51,10 +52,34 @@ body {
 
 
 a {
-    color:rgb(90, 42, 62)
+    color:rgb(7, 5, 41)
 }
 
-table, th, td {
+table, td, th {
     width: 100%;
-    border: 1px solid;
+    border: 1px solid black;
+    border-collapse: collapse;
+    
+}
+
+th, td { padding: 7px 7px 7px 7px; }
+
+tr:nth-child(odd) { background-color: #696f8a; }
+
+tr:not(:first-child):hover {
+    background-color: rgb(44, 49, 95);
+}
+
+/*
+tr:hover { background-color: #8e8ea0; }
+
+tr:first-child:hover {
+    background-color: white;
+}
+
+*/
+
+#firstid {
+    size: 45px;
+    font-size: 12;
 }

@@ -31,13 +31,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "doc_manager.apps.DocManagerConfig",
+    "account.apps.AccountConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "doc_manager.apps.DocManagerConfig",
+    "approvement.apps.ApprovementConfig",
+
 ]
 
 MIDDLEWARE = [
@@ -126,3 +129,10 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MEDIA_ROOT = f"{BASE_DIR}/../data"
+MEDIA_URL = "/files/"
+
+LOGIN_REDIRECT_URL = 'doc_manager:project_list'
+LOGIN_URL = 'account:login'
+LOGOUT_URL = 'account:logout'

@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+
+<html>
+<head>
+    <title>
+    {% block title %}
+        Файлы
+    {% endblock %}
+    </title>
+</head>
+
+<body>
+{% block content %}
+    <h2>Все файлы:</h2>
+    <table>
+    {% for file in all_files %}
+        <tr>
+            <td><a href="{% url 'doc_manager:open_file' file.id %}">{{ file.id }}</a></td>
+            <td><a href="{% url 'doc_manager:open_file' file.id %}">{{ file.file }}</a></td>
+        </tr>
+    {%endfor%}
+    </table>
+
+{% endblock %}
+
+</body>
+</html>

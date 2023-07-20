@@ -22,26 +22,14 @@
 		<th>Дата создания</th>
 	</tr>
 
-	
 	{% for document in documents %}
 		<tr>
-			<td>
-			<a href="{% url 'doc_manager:document_detail' document.id %}">
-			{{ document.code }}
-			</a>
-			</td>
-			<td>
-			{{ document.name }}
-			</td>
-			<td>
-			{{ document.developer }}
-			</td>
-			<td>
-			{{ document.date_creation }}
-			</td>
+			<td><a href="{% url 'doc_manager:document_detail' document.id %}">{{ document.code }}</a></td>
+			<td>{{ document.name }}</td>
+			<td>{{ document.developer }}</td>
+			<td>{{ document.date_creation }}</td>
 		</tr>
 	{% endfor %}
-	
 	</table>
 {% endblock %}
 

@@ -1,0 +1,68 @@
+{% extends "index.html" %}
+
+<html>
+<head>
+    <title>
+    {% block title %}
+        Новый документ
+    {% endblock %}
+    </title>
+</head>
+
+<body>
+{% block content %}
+    <h2>Создать документ:</h2>
+    <form action="{% url 'doc_manager:document_new_save' %}" method="POST">
+        {% csrf_token %}
+
+
+        Проект
+        <select id="project_value" onchange="run()">
+            {% for project in projects %}
+                <option name="project" value={{ project.id }}>{{ project.name_full }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+        ID станции<br>
+        <input type="text" id="projid"><br>
+
+
+        <script>
+        function run() {
+            e = document.getElementById("project_value").value
+            document.getElementById("projid").value = document.getElementById("project_value").value;
+            document.getElementById("vvv").value = document.getElementById("project_value").value;
+        }
+        </script>
+
+        <br><br>
+        Здание
+        <select name="building">
+            {% for building in buildings %}
+                <option name="building" value={{ building.id }}>{{ building.code }} - {{ building.name }} {{ building.project.id }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+        Код документа
+        <input name="code">
+        <br><br>
+        Наименование
+        <input name="name">
+        <br><br>
+        Пользователь
+        <select name="developer">
+            {% for user in users %}
+                <option name="developer" value={{ user.id }}>{{ request.user.first_name }} {{request.user.last_name}}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+        <button type="submit">Создать документ</button>
+    </form>
+{% endblock %}
+
+</body>
+</html>
+</html>

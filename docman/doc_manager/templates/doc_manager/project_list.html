@@ -14,9 +14,9 @@
 	{% block sidebar %}
 		<h1>Все проекты:</h1>
 		{% for project in projects %}
-			<a href='{% url "doc_manager:document_list" %}'>
-				<h3>{{ project.name_full }}</h3>
-			</a>
+			<h3><a href="{% url 'doc_manager:document_by_project' project.code %}">
+				{{ project.name_full }}
+			</a></h3>
 		{% endfor %}
 	{% endblock %}
 </body>

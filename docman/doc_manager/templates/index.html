@@ -15,28 +15,58 @@
 		<header>
 			<div class="top_container">
 				<div class="header_left">
-					<a href="{% url 'doc_manager:project_list' %}">
-					<h1>Добро пожаловать в DocMan</h1>
-					</a>
+					<a href="{% url 'doc_manager:project_list' %}"><h1>DocMan</h1></a>
 				</div>
 
 				<div class="header_center">
-					<h1><h2>Здесь будет верхняя панель</h2></h1>
+					<a href="{% url 'doc_manager:document_create' %}"><h2>Создать новый документ</h2></a>
 				</div>
 
 				<div class="header_right">
-					<form action="{% url "doc_manager:find_documents" %}">
-						<input type="search" placeholder="Search" name="search">
-						<button type="submit">Найти</button>
+					<a href="{% url 'doc_manager:show_all_files' %}"><h2>Показать все документы</h2></a>
+				</div>
+
+				<div class="header_right">
+					<form action="{% url 'doc_manager:find_documents' %}">
+					<input type="search" placeholder="Search" name="search">
+					<button type="submit">Найти</button>
 					</form>
 				</div>
+
+				<div class="user">
+					{% if request.user.is_authenticated %}
+						Здравствуйте, {{ request.user.first_name|default:request.user.username }}
+						<a href="{% url 'account:logout' %}">Выйти</a>
+					{% else %}
+						<a href="{% url 'account:login' %}">Войти</a>
+					{% endif %}
+				</div>
+
 			</div>
 		</header>
 
 		<div class = "main_container">
 			<div class="sidebar">
+
+				<h1>Все проекты:</h1>
+				{% for project in projects %}
+					<h3><a href="{% url 'doc_manager:document_by_project' project.code %}">
+						{{ project.name_full }}
+					</a></h3>
+				{% endfor %}
+
+				Sidebar
+				<h1>Sidebar h1</h1>
+				<h2>Sidebar h2</h2>
+				<h3>Sidebar h3</h3>
+				<h4>Sidebar h4</h4>
+				<h5>Sidebar h5</h5>
+				<h6>Sidebar h6</h6>
+				<p>Sidebar p</p>
 				{% block sidebar %}
+
 				{% endblock %}
+
 			</div>
 
 			<div class="content">
