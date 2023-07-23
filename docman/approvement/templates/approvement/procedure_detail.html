@@ -1,0 +1,57 @@
+{% extends "doc_manager/doc_detail.html" %}
+
+<html>
+<body>
+{% block approvement %}
+    <h2>Детали процедуры согласования #{{ procedure.id }}</h2>
+    <table>
+        <tr>
+            <th>Шаг процедуры</th>
+            <th>Согласующий</th>
+            <th>Статус</th>
+            <th>Дата создания</th>
+            <th>Дата изменения</th>
+        </tr>
+        {% for step in steps %}
+            <tr>
+                <td>{{ step.role.name }}</td>
+                <td>{{ step.user.first_name }} {{ step.user.last_name }}</td>
+                <td>{{ step.status }}</td>
+                <td>{{ step.date_creation }}</td>
+                <td>{{ step.date_creation }}</td>
+
+                {% if step.user == request.user and step.status.name != 'Согласовано' %}
+                    <td>
+                        <form action="{% url 'approvement:show_comments' document.code procedure.id step.id %}">
+                            <button type="submit">Просмотреть замечания</button>
+                        </form>
+                    </td>
+
+                    <td>
+                        <form action="{% url 'approvement:accept_procedure_step' document.code procedure.id step.id %}">
+                            <button type="submit">Согласовать документ</button>
+                        </form>
+                    </td>
+                {% else %}
+                    <td colspan="2">
+                        <form action="{% url 'approvement:show_comments' document.code procedure.id step.id %}">
+                            <button type="submit">Просмотреть замечания</button>
+                        </form>
+                    </td>
+                {% endif %}
+
+            </tr>
+        {% endfor %}
+    </table>
+    <br>
+    {% if request.user in active_users %}
+    <table>
+        <tr>
+
+        </tr>
+    </table>
+    {% endif %}
+
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,37 @@
+{% extends "index.html" %}
+
+<html>
+<body>
+    {% block content %}
+        <h2>Начать процедуру согласования для документа {{ document.code }}:</h2>
+
+                    <form action="{% url 'approvement:start_procedure' document.code %}" method="POST">
+                        {% csrf_token %}
+        <table>
+            <tr>
+                <th>Роль</th>
+                <th>Согласующий</th>
+            </tr>
+            {% for role in roles %}
+                <tr>
+                    <td>{{ role.name }}</td>
+                    <td>
+                        <select name={{ role.slug }} required="required">
+                            <option value="" selected disabled hidden>Выберите согласующего</option>
+                            {% for user in users %}
+                                <option name={{ role.slug }} value={{ user.id }}>{{ user.last_name }} {{ user.first_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2">
+                        <button type="submit">Запустить процедуру согласования</button>
+                </td>
+            </tr>
+            </form>
+        </table>
+    {% endblock %}
+</body>
+</html>

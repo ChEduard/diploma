@@ -39,7 +39,6 @@
 
 		<div class = "main_container">
 			<div class="sidebar">
-				{% block sidebar %}
 				<h1>Все проекты:</h1>
 				{% for project in projects %}
 					<h3><a href="{% url 'doc_manager:document_by_project' project.code %}">
@@ -47,7 +46,7 @@
 					</a></h3>
 				{% endfor %}
 
-
+				{% block sidebar %}
 				{% endblock %}
 			</div>
 

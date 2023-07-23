@@ -1,0 +1,96 @@
+{% extends "index.html" %}
+
+<html>
+<body>
+    {% block content %}
+        <h2>Замечания к документу <a href="{% url 'doc_manager:document_detail' document.id %}">{{ document.code }}</a>:</h2>
+    <table>
+        <tr>
+            <th>Замечание</th>
+            <th>Автор замечания</th>
+            <th>Ответ</th>
+            <th>Автор ответа</th>
+            <th>Исправлено</th>
+            <th>Дата создания</th>
+            <th>Дата изменения</th>
+            <th>Действие</th>
+        </tr>
+        {% for comment in comments %}
+            <tr>
+                <td>{{ comment.comment_text }}</td>
+                <td>{{ comment.comment_author }}</td>
+
+                {% if comment.response_text %}
+                    <td>{{ comment.response_text }}</td>
+                    <td>{{ comment.response_author }}</td>
+                    {% if comment.is_corrected == True %}
+                        <td>Да</td>
+                        <td>{{ comment.date_creation }}</td>
+                        <td>{{ comment.date_update }}</td>
+                        <td></td>
+                    {% elif comment.is_corrected == False %}
+                        <td>Нет</td>
+                        <td>{{ comment.date_creation }}</td>
+                        <td>{{ comment.date_update }}</td>
+                        <td>
+                            <form action="{% url 'approvement:comment_response' document.code procedure.id step.id comment.id%}" method="GET">
+                                {% if comment.comment_author == request.user %}
+                                    <button type="submit">Замечание исправлено</button>
+                                {% endif %}
+                            </form>
+                        </td>
+                    {% endif %}
+
+                {% else %}
+                    {% if document.developer == request.user %}
+                        <form action="{% url 'approvement:comment_response' document.code procedure.id step.id comment.id%}" method="POST">
+                            {% csrf_token %}
+                            <td><textarea name="response_text" placeholder="Введите текст ответа" required></textarea></td>
+                            <td>{{ request.user }}</td>
+                            {% if comment.is_corrected == True %}
+                                <td>Да</td>
+                            {% elif comment.is_corrected == False %}
+                                <td>Нет</td>
+                            {% endif %}
+                            <td>{{ comment.date_creation }}</td>
+                            <td>{{ comment.date_update }}</td>
+                            <td><button type="submit">Добавить ответ</button></td>
+                        </form>
+                    {% else %}
+                        <td></td>
+                        <td></td>
+                        {% if comment.is_corrected == True %}
+                            <td>Да</td>
+                        {% elif comment.is_corrected == False %}
+                            <td>Нет</td>
+                        {% endif %}
+                        <td>{{ comment.date_creation }}</td>
+                        <td>{{ comment.date_update }}</td>
+                        <td></td>
+                    {% endif %}
+                {% endif %}
+            </tr>
+        {% endfor %}
+
+        {% if step.user == request.user %}
+        <form action="{% url 'approvement:show_comments' document.code procedure.id step.id %}" method="POST" >
+            {% csrf_token %}
+            <tr>
+                <td><textarea name="comment_text" placeholder="Введите текст замечания" required></textarea></td>
+                <td>{{ request.user }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><button type="submit">Добавить замечание</button></td>
+            </tr>
+        </form>
+        {% endif %}
+
+    </table>
+
+
+    {% endblock %}
+</body>
+</html>

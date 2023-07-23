@@ -12,11 +12,8 @@
 
 <body>
 {% block content %}
-	<h3>Все документы проекта {{ project.name_full }}</h3>
-	<form action="{% url 'doc_manager:document_create' project.code %}">
-		<button type="submit">Создать новый документ</button>
-	</form>
-	<p></p>
+	<h3>Найдены следующие документы:</h3>
+
 	<table>
 	<tr>
 		<th>KKS код</th>

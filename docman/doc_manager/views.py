@@ -2,8 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
-from .models import Document, Project, Building, AttachedFile
+from .models import Document, Project, Building, AttachedFile, DocumentStatus
 from .forms import UploadFileForm
+from approvement.models import Procedure
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
@@ -18,23 +19,30 @@ def project_list(request):
                   'doc_manager/main_page.html',
                   {'projects': projects})
 
+@login_required
 def document_list(request):
     documents = Document.objects.all()
     return render(request,
                   'doc_manager/doc_list.html',
                   {'documents': documents, 'projects': Project.objects.all()})
 
+@login_required
 def document_detail(request, id):
     document = get_object_or_404(Document,
                                  id=id,)
     try:
+        procedures = Procedure.objects.filter(document=document)
+    except:
+        procedures = ''
+    try:
         files = AttachedFile.objects.filter(document=id)
     except: files = ''
-
     return render(request,
                   'doc_manager/doc_detail.html',
-                  {'document': document, 'files': files, 'projects': Project.objects.all()})
+                  {'projects': Project.objects.all(), 'document': document,
+                   'files': files, 'procedures': procedures})
 
+@login_required
 def find_documents(request):
     search_query = request.GET.get('search', '')
     if search_query:
@@ -45,10 +53,10 @@ def find_documents(request):
     print(search_query)
     print(documents)
     return render(request,
-                  'doc_manager/doc_list.html',
+                  'doc_manager/doc_list_search.html',
                   {'documents': documents, 'projects': Project.objects.all()})
 
-
+@login_required
 def document_by_project(request, code):
     project = Project.objects.get(code=code)
     documents = Document.objects.raw(f"SELECT * FROM docman.doc_manager_document AS doc \
@@ -57,25 +65,37 @@ def document_by_project(request, code):
                                     WHERE proj.id = {project.id}")
     return render(request,
                   'doc_manager/doc_list.html',
-                  {'documents': documents, 'projects': Project.objects.all()})
+                  {'documents': documents, 'projects': Project.objects.all(), 'project': project})
 
-
-def create_new_document(request):
+@login_required
+def create_new_document(request, code):
+    project = Project.objects.get(code=code)
     return render(request,
                   'doc_manager/doc_create.html',
-                  {'projects': Project.objects.all(), 'buildings': Building.objects.all(), 'users': User.objects.exclude(username="admin")})
-
+                  {'projects': Project.objects.all(), 'project': project,
+                   'buildings': Building.objects.filter(project=project), 'users': User.objects.exclude(username="admin")})
+@login_required
 def save_new_document(request):
     code = request.POST['code']
     name = request.POST['name']
     building = request.POST['building']
-    developer = 2
+    developer = request.user.id
     new_document = Document(code=code, name=name, building=Building.objects.get(id=building), developer=User.objects.get(id=developer))
     new_document.save()
+
+    try:
+        procedures = Procedure.objects.filter(document=document)
+    except:
+        procedures = ''
+    try:
+        files = AttachedFile.objects.filter(document=id)
+    except:
+        files = ''
     return render(request,
                   'doc_manager/doc_detail.html',
-                  {'document': new_document, 'projects': Project.objects.all()})
+                  {'projects': Project.objects.all(), 'document': new_document, 'files': files, 'procedures': procedures})
 
+@login_required
 def add_file_to_document(request, id):
     document = get_object_or_404(Document,
                                  id=id, )
@@ -89,24 +109,22 @@ def add_file_to_document(request, id):
 
         newfile = AttachedFile.objects.create(document=document, file=file)
         newfile.save()
+        if document.status.name == 'Создан':
+            document.status = DocumentStatus.objects.get(name='Разработан')
+            document.save()
 
-        return render(request,
-                      'doc_manager/doc_detail.html',
-                      {'document': document, 'projects': Project.objects.all(), 'form': form}
-                      )
+        return document_detail(request, id)
     elif request.method == 'GET':
-        return render(request,
-                      'doc_manager/doc_detail.html',
-                      {'document': document, 'projects': Project.objects.all()})
+        return document_detail(request, id)
 
-
+@login_required
 def show_all_files(request):
     all_files = AttachedFile.objects.all()
     return render(request,
                   'doc_manager/all_files.html',
                   {'all_files': all_files, 'projects': Project.objects.all()})
 
-
+@login_required
 def open_file(request, id):
     file = AttachedFile.objects.get(id=id)
     ################################################################################################################

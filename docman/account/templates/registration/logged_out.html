@@ -1,11 +1,13 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 
 {% block title %}Logged out{% endblock %}
 
+{% block sidebar %}
+{% endblock %}
 {% block content %}
-  <h1>Logged out</h1>
+  <h1>До свидания!</h1>
   <p>
-  You have been successfully logged out.
-  You can <a href="{% url 'account:login' %}">log-in again</a>.
+  Вы успешно вышли из учётной записи.
+  Вы можете <a href="{% url 'account:login' %}">войти в систему снова</a>.
   </p>
 {% endblock %}

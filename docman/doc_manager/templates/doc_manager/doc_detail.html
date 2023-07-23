@@ -11,47 +11,85 @@
 
 <body>
 {% block content %}
-    <h2>Детали документа:</h2>
+    <h2>{{ document.code }}</h2>
     <table>
         <tr>
             <th>KKS код</th>
             <th>Наименование</th>
             <th>Разработчик</th>
             <th>Здание</th>
+            <th>Статус</th>
             <th>Дата создания</th>
             <th>Дата изменения</th>
         </tr>
         <tr>
-            <td><input size="50" type="text" value="{{ document.code }}" id="firstid" /></td>
+            <td>{{ document.code }}</td>
             <td>{{ document.name }}</td>
             <td>{{ document.developer }}</td>
             <td>{{ document.building.code }} {{ document.building.name }}</td>
+            <td>{{ document.status.name }}</td>
             <td>{{ document.date_creation }}</td>
             <td>{{ document.date_update }}</td>
         </tr>
-        <tr height="100">
+        <tr>
 
             <form action="{% url 'doc_manager:add_file_to_document' document.id %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <td>Загрузить документы:</td>
-                <td colspan="4">
-                    <input type="file" id="file_id" name="file" value="Загрузить файл"/>
-                </td>
-                <td><button>Загрузить файлы</button></td>
+                <td colspan="4"><input type="file" id="file_id" name="file" value="Загрузить файл"/></td>
+                <td colspan="2"><button>Загрузить файлы</button></td>
             </form>
 
         </tr>
-        <tr height="100">
+        <tr>
             <td>Загруженные документы:</td>
-            <td colspan="5">
-            {% for file in files %}
-            <a href="{{ file.file.url }}" target="_blank">{{ file.file }}</a>
-            {% endfor %}
+            <td colspan="6">
+                {% for file in files %}
+                <p><a href="{{ file.file.url }}" target="_blank">{{ file.file }}</a></p>
+                {% endfor %}
             </td>
 
         </tr>
-    </table>
-{% endblock %}
+        <tr>
+            <td>Процедура согласования:</td>
+            <td colspan="6">
+                <form action="{% url 'approvement:open_procedure_creation_form' document.code %}">
+					<button type="submit">Начать процедуру согласования</button>
+                </form>
+            </td>
 
+        </tr>
+
+        {% if procedures %}
+            {% for procedure in procedures %}
+                <tr>
+                    <td colspan="2">Процедура согласования #{{ procedure.id }}</td>
+                    <td colspan="2">{{ procedure.status.name }}</td>
+                    <td colspan="2">
+                        <form action="{% url 'approvement:procedure_detail' document.code procedure.id %}">
+                            <button type="submit">Просмотреть детали процедуры согласования</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url 'approvement:delete_procedure' document.code procedure.id %}">
+                            <button type="submit">Удалить процедуру согласования</button>
+                        </form>
+                    </td>
+
+
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td><p>Данный документ ещё не отправлялся на согласование</p></td>
+            </tr>
+        {% endif %}
+
+    </table>
+
+
+    {% block approvement %}
+    {% endblock %}
+
+{% endblock %}
 </body>
 </html>

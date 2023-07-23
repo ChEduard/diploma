@@ -63,7 +63,3 @@ class AttachedFile(models.Model):
 
     file = models.FileField(upload_to=get_attached_file_path,
                             max_length=250)
-    '''
-    file = models.FileField(upload_to=get_attached_file_path,
-                            max_length=250)
-    '''

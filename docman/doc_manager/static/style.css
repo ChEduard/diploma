@@ -3,7 +3,13 @@ html, body {
     height:100%;
 }
 header {
-    background-color: rgb(155, 160, 177);
+    width: 100%;
+    background-color: rgb(43, 43, 43);
+    color: rgb(197, 197, 197);
+}
+
+header a {
+    color:rgb(197, 197, 197);
 }
 
 body {
@@ -17,16 +23,23 @@ body {
     box-sizing: border-box;
 }
 
-.header_left, .header_center, .header_right, .header_center_right, .user {
+.header_left, .header_center, .header_right {
+    width:33%;
     display: inline-block;
     box-sizing: border-box;
-    margin:0 auto;
-    padding: 0;
-    width: 18%;
-    padding: 10px 0;
+    margin:0 ;
+    padding: 0 0;
     vertical-align:middle;
+    
 }
 
+.header_center {
+    text-align: center;
+}
+
+.header_right {
+    text-align: right;
+}
 
 .sidebar, .content {
     display: inline-block;
@@ -38,25 +51,31 @@ body {
 
 
 .sidebar{
-    width: 30%; 
-    max-width: 300px;
+    width: 300px; 
+    max-width: 300px 30%;
 }
 
 .content{
-    width: 70%;
-    height: 70%;
+    width: 80%;
+    height: 80%;
     text-align: center;
     
 }
-
 
 
 a {
     color:rgb(7, 5, 41)
 }
 
-table, td, th {
+table {
     width: 100%;
+}
+
+tr {
+    height: 50px;
+}
+
+table, td, th {
     border: 1px solid black;
     border-collapse: collapse;
     
@@ -64,10 +83,11 @@ table, td, th {
 
 th, td { padding: 7px 7px 7px 7px; }
 
-tr:nth-child(odd) { background-color: #696f8a; }
+
+tr:nth-child(odd) { background-color: #dfdfdf; }
 
 tr:not(:first-child):hover {
-    background-color: rgb(44, 49, 95);
+    background-color: rgb(139, 139, 139);
 }
 
 /*
@@ -82,4 +102,9 @@ tr:first-child:hover {
 #firstid {
     size: 45px;
     font-size: 12;
+}
+
+
+button {
+
 }

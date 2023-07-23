@@ -23,6 +23,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("account/", include("account.urls", namespace="account")),
     path("", include("doc_manager.urls", namespace="doc_manager")),
+    path("approvement/", include("approvement.urls", namespace="approvement")),
 ]
 
 if settings.DEBUG:
