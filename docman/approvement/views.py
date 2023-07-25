@@ -1,11 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from doc_manager.models import Project, Document, AttachedFile, DocumentStatus
 from doc_manager.views import document_detail
 from .models import Role, Procedure, ProcedureStatus, ProcedureStep, StepStatus, Comment
 
 
+@login_required
 def open_procedure_creation_form(request, code):
+    '''
+    Открытие формы создания процедуры согласования
+    Переменные: code - уникальный код документа
+    '''
     document = get_object_or_404(Document, code=code)
     users = User.objects.exclude(username='admin').order_by('last_name')
     roles = Role.objects.order_by('priority')
@@ -13,7 +19,12 @@ def open_procedure_creation_form(request, code):
                   'approvement/procedure_creation_form.html',
                   {'projects': Project.objects.all(), 'document': document, 'roles': roles, 'users':users})
 
+@login_required
 def start_procedure(request, code):
+    '''
+    Присвоение документу новой процедуры согласования. Перевод документа в статус "На согласовании"
+    Переменные: code - уникальный код документа
+    '''
     current_document = get_object_or_404(Document, code=code)
     users = User.objects.exclude(username='admin').order_by('last_name')
     roles = Role.objects.order_by('priority')
@@ -30,7 +41,13 @@ def start_procedure(request, code):
 
     return document_detail(request, current_document.id)
 
+@login_required
 def procedure_detail(request, code, id):
+    '''
+    Открытие деталей процедуры согласования (просмотр шагов процедуры)
+    Переменные: code - уникальный код документа
+                id - id процедуры согласования
+    '''
     procedure = Procedure.objects.get(id=id)
     document = Document.objects.get(code=code)
     procedure_steps = ProcedureStep.objects.filter(procedure=procedure)
@@ -51,20 +68,27 @@ def procedure_detail(request, code, id):
                   {'projects': Project.objects.all(), 'document': document, 'files': files,
                    'procedures': procedures, 'procedure': procedure,'steps': procedure_steps, 'active_users': active_users})
 
-
+@login_required
 def delete_procedure(request, code, id):
+    '''
+    Удаление процедуры согласования
+    Переменные: code - уникальный код документа
+                id - id процедуры согласования
+    '''
     current_procedure = Procedure.objects.get(id=id)
     current_procedure.delete()
     document = Document.objects.get(code=code)
     return document_detail(request, document.id)
 
-def open_comment_form(request, code, id):
-    procedure = Procedure.objects.get(id=id)
-    document = Document.objects.get(code=code)
-    procedure_steps = ProcedureStep.objects.filter(procedure=procedure)
-    pass
 
+@login_required
 def show_comments(request, code, id, step_id):
+    '''
+    Открытие списка замечаний. Если метод POST - добавление нового замечания.
+    Переменные: code - уникальный код документа
+                id - id процедуры согласования
+                step_id - id шага процедуры согласования
+    '''
     step = ProcedureStep.objects.get(id=step_id)
     if request.method == 'POST':
         comment = Comment(procedure_step=ProcedureStep.objects.get(id=step_id),
@@ -82,7 +106,15 @@ def show_comments(request, code, id, step_id):
                    'step': step,
                    'comments': Comment.objects.filter(procedure_step=step)})
 
+@login_required
 def comment_response(request, code, id, step_id, comment_id):
+    '''
+    Ответ на замечания.
+    Переменные: code - уникальный код документа
+                id - id процедуры согласования
+                step_id - id шага процедуры согласования
+                comment_id - id замечания
+    '''
     step = ProcedureStep.objects.get(id=step_id)
     comment = Comment.objects.get(id=comment_id)
     comments = Comment.objects.filter(procedure_step=step)
@@ -109,7 +141,14 @@ def comment_response(request, code, id, step_id, comment_id):
                    'step': step,
                    'comments': comments})
 
+@login_required
 def accept_procedure_step(request, code, id, step_id):
+    '''
+    Согласование шага процедуры. Статус шага меняется на "Согласовано". Если все шаги имеют статус "Согласовано", документ приобретает статус "Согласован"
+    Переменные: code - уникальный код документа
+                id - id процедуры согласования
+                step_id - id шага процедуры согласования
+    '''
     procedure = Procedure.objects.get(id=id)
     document = Document.objects.get(code=code)
     step = ProcedureStep.objects.get(id=step_id)

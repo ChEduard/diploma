@@ -14,6 +14,9 @@ from django.http import HttpResponse
 
 @login_required
 def project_list(request):
+    '''
+    Отрисовка стартовой страницы со списком проектов
+    '''
     projects = Project.objects.all()
     return render(request,
                   'doc_manager/main_page.html',
@@ -21,6 +24,9 @@ def project_list(request):
 
 @login_required
 def document_list(request):
+    '''
+    Отрисовка полного списка документов по всем проектам
+    '''
     documents = Document.objects.all()
     return render(request,
                   'doc_manager/doc_list.html',
@@ -28,6 +34,10 @@ def document_list(request):
 
 @login_required
 def document_detail(request, id):
+    '''
+    Отрисовка подробной карточки документа
+    Переменные: id - id документа
+    '''
     document = get_object_or_404(Document,
                                  id=id,)
     try:
@@ -44,20 +54,24 @@ def document_detail(request, id):
 
 @login_required
 def find_documents(request):
+    '''
+    Осуществляет поиск документов по уникальному коду
+    '''
     search_query = request.GET.get('search', '')
     if search_query:
         documents = Document.objects.filter(code__icontains=search_query)
     else:
         documents = Document.objects.all()
-
-    print(search_query)
-    print(documents)
     return render(request,
                   'doc_manager/doc_list_search.html',
                   {'documents': documents, 'projects': Project.objects.all()})
 
 @login_required
 def document_by_project(request, code):
+    '''
+    Отрисовка списка документов по конкретному объекту (проекту)
+    Переменные: code - короткий код проекта
+    '''
     project = Project.objects.get(code=code)
     documents = Document.objects.raw(f"SELECT * FROM docman.doc_manager_document AS doc \
                                     INNER JOIN docman.doc_manager_building AS build ON (doc.building_id = build.id) \
@@ -69,6 +83,10 @@ def document_by_project(request, code):
 
 @login_required
 def create_new_document(request, code):
+    '''
+    Открытие формы создания нового документа
+    Переменные: code - короткий код проекта
+    '''
     project = Project.objects.get(code=code)
     return render(request,
                   'doc_manager/doc_create.html',
@@ -76,6 +94,9 @@ def create_new_document(request, code):
                    'buildings': Building.objects.filter(project=project), 'users': User.objects.exclude(username="admin")})
 @login_required
 def save_new_document(request):
+    '''
+    Сохранение нового документа с последующей отрисовкой его карточки
+    '''
     code = request.POST['code']
     name = request.POST['name']
     building = request.POST['building']
@@ -97,16 +118,15 @@ def save_new_document(request):
 
 @login_required
 def add_file_to_document(request, id):
+    '''
+    Добавление файла к документу
+    Переменные: id - id документа
+    '''
     document = get_object_or_404(Document,
                                  id=id, )
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         file = request.FILES['file']
-        print(request)
-        print(type(file))
-        print(file)
-        print(file.file)
-
         newfile = AttachedFile.objects.create(document=document, file=file)
         newfile.save()
         if document.status.name == 'Создан':
@@ -119,6 +139,10 @@ def add_file_to_document(request, id):
 
 @login_required
 def show_all_files(request):
+    '''
+    Выводит список всех файлов, только для режима отладки
+    '''
+
     all_files = AttachedFile.objects.all()
     return render(request,
                   'doc_manager/all_files.html',
@@ -126,9 +150,11 @@ def show_all_files(request):
 
 @login_required
 def open_file(request, id):
+    '''
+    Открытие файла, только для режима отладки
+    Переменные: id - id файла
+    '''
     file = AttachedFile.objects.get(id=id)
-    ################################################################################################################
-    MEDIA_ROOT = 'E:\PythonProject\docmandata'
     return render(request,
                   'doc_manager/file_view.html',
                   {'file': file, 'projects': Project.objects.all()})
